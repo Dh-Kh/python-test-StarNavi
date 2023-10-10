@@ -1,6 +1,6 @@
 ## Start app
 ```bash
-git clone https://github.com/Dh-Kh/python-test-dzenCode.git
+git clone https://github.com/Dh-Kh/python-test-StarNavi.git
 ```
 Start app using Docker
 ```bash

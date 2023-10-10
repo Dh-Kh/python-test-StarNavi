@@ -47,14 +47,16 @@ class LikeModelView(LoggingMixin, RetrieveUpdateDestroyAPIView):
     
     def get_object(self):
         id = self.kwargs.get(self.lookup_url_kwarg)
-        return get_object_or_404(LikeModel, related_post__id=id)
+        return get_object_or_404(LikeModel.objects.select_related(
+            "related_post"
+            ), related_post__id=id)
     
     def update(self, request, *args, **kwargs):
         id = self.kwargs.get(self.lookup_url_kwarg)
         current_model = self.get_object()
         current_user = self.request.query_params.get("current_user")
         #or current_user = request.user
-        opposite_model = DislikeModel.objects.get(related_post__id=id)
+        opposite_model = DislikeModel.objects.select_related("related_post").get(id=id)
         if_in_opposite_model = opposite_model.users_amount.filter(username=
                                                     request.user.username)
         if not if_in_opposite_model:
@@ -71,12 +73,13 @@ class DislikeModelView(LoggingMixin, RetrieveUpdateDestroyAPIView):
     
     def get_object(self):
         id = self.kwargs.get(self.lookup_url_kwarg)
-        return get_object_or_404(DislikeModel, related_post__id=id)
+        return get_object_or_404(DislikeModel.objects.select_related("related_post")
+                                 ,related_post__id=id)
     def update(self, request, *args, **kwargs):
         id = self.kwargs.get(self.lookup_url_kwarg)
         current_model = self.get_object()
         current_user = self.request.query_params.get("current_user")
-        opposite_model = LikeModel.objects.get(related_post__id=id)
+        opposite_model = LikeModel.objects.select_related("related_post").get(id=id)
         if_in_opposite_model = opposite_model.users_amount.filter(username=
                                                     request.user.username)
         if not if_in_opposite_model:
